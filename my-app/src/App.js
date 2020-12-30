@@ -1,36 +1,45 @@
 import { useEffect, useState } from 'react';
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4, v4 } from 'uuid';
 import './App.css';
 import createProfile from './components/createProfile';
 import Profile from './components/Profile';
-import { storageAdd, storageGet } from './helpers/storageHelper';
+import { addStorageProfile, getStorageProfiles } from './helpers/storageHelper';
 
 function App() {
-  const [localProfiles, setProfiles] = useState([]);
+  const [localProfiles, setProfiles] = useState({});
 
   useEffect(() => {
-    const profilesJson = window.localStorage.getItem('profiles');
-    if (profilesJson) {
-      setProfiles(JSON.parse(profilesJson));
-    }
+    const profiles = getStorageProfiles();
+    if (profiles) setProfiles(profiles);
   }, []);
 
-  const onProfileChange = profile => {
-    const profilesJson = storageGet('profiles');
-    storageAdd('profiles', JSON.stringify([profile]));
+  const onProfileChange = (id, profile) => {
+    const profilesJson = getStorageProfiles();
+    let objectToStore = {};
+    objectToStore[id] = profile;
+    addStorageProfile(id, profile);
+  };
+
+  const getProfilesList = () => {
+    const keys = Object.keys(localProfiles);
+    return keys.map(key => {
+      return (
+        <Profile
+          key={key}
+          id={key}
+          data={localProfiles[key]}
+          onProfileChange={onProfileChange}
+        ></Profile>
+      );
+    });
   };
 
   return (
     <div className="App">
-      {localProfiles && localProfiles[0] && (
-        <Profile
-          id={localProfiles[0].id}
-          data={localProfiles[0]}
-          onProfileChange={onProfileChange}
-        ></Profile>
-      )}
+      {getProfilesList()}
       <p></p>
-      <Profile onProfileChange={onProfileChange}></Profile>
+      {/* TODO:  Button to make a new profile */}
+      <Profile id={v4()} onProfileChange={onProfileChange}></Profile>
     </div>
   );
 }

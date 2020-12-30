@@ -1,11 +1,18 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import translate from '../helpers/translate';
 import charProfile from '../models/characterProfile';
 import { decimalToPercent } from '../helpers/stringHelper';
 import { storageAdd } from '../helpers/storageHelper';
+import {
+  getElePower,
+  getSpiralBuffs,
+  getSubstatGrowth,
+} from '../helpers/profileHelper';
+import { v4 } from 'uuid';
+import useWhyDidYouUpdate from '../hooks/whydidyouupdate';
 
-const useInput = (id, initState = '', stringId) => {
+const useInput = (id, initState = '', stringId, inputProps = {}) => {
   const intl = useIntl();
   const [state, setState] = useState(initState);
 
@@ -23,8 +30,9 @@ const useInput = (id, initState = '', stringId) => {
         name={id}
         onChange={onChange}
         maxLength="7"
-        size="5"
+        size="3"
         value={state}
+        {...inputProps}
       ></input>
     </span>
   );
@@ -32,9 +40,11 @@ const useInput = (id, initState = '', stringId) => {
   return [input, state, setState];
 };
 
-const useProfile = (initProfile = {}) => {
-  const [profile, setProfile] = useState(null);
-
+const useProfile = (initProfile = {}, onProfileChange) => {
+  const [nameComponent, nameState] = useInput('name', initProfile.name, null, {
+    size: '10',
+    maxLength: '15',
+  });
   const [baseAtkComponent, baseAtkState] = useInput(
     'baseAtk',
     initProfile.baseAtk,
@@ -60,8 +70,19 @@ const useProfile = (initProfile = {}) => {
     initProfile.percEle ? initProfile.percEle * 100 : '',
   );
 
+  useWhyDidYouUpdate('Hello world', {
+    baseAtkState,
+    flatAtkState,
+    percAtkState,
+    critRateState,
+    critDmgState,
+    eleDmgState,
+    onProfileChange,
+  });
+
   useEffect(() => {
     const result = charProfile({
+      name: nameState,
       baseAtk: parseInt(baseAtkState),
       flatAtk: parseInt(flatAtkState),
       percAtk: percAtkState / 100,
@@ -70,19 +91,21 @@ const useProfile = (initProfile = {}) => {
       percEle: eleDmgState / 100,
     });
 
-    if (result) setProfile(result);
+    onProfileChange(result);
   }, [
+    nameState,
     baseAtkState,
     flatAtkState,
     percAtkState,
     critRateState,
     critDmgState,
     eleDmgState,
-    setProfile,
+    onProfileChange,
   ]);
 
   const components = (
     <React.Fragment>
+      {nameComponent}
       {baseAtkComponent}
       {flatAtkComponent}
       {percAtkComponent}
@@ -92,22 +115,31 @@ const useProfile = (initProfile = {}) => {
     </React.Fragment>
   );
 
-  return [profile, components];
+  return components;
 };
 
-const Profile = ({ data, onProfileChange }) => {
+const Profile = ({ id, data, onProfileChange }) => {
   const intl = useIntl();
 
   const [profileData, setProfileData] = useState(data);
 
-  const onProfileUpdate = profileInputs => {
-    setProfileData(charProfile(profileInputs), profileData.id);
-  };
-  const [profile, components] = useProfile(data, onProfileUpdate);
+  useWhyDidYouUpdate('Profile why update?', { onProfileChange, profileData });
+  const onProfileUpdate = useCallback(
+    profileModel => {
+      if (!profileModel) return;
 
-  const getSubstatGrowth = profile => {
+      setProfileData(profileModel);
+      onProfileChange(id, profileModel); // This is hacky/inefficient.  Makes a v4 until the profile is saved
+    },
+    [id, onProfileChange],
+  );
+  const components = useProfile(data, onProfileUpdate);
+
+  const getSubstatInfo = profile => {
     if (profile) {
-      const { atkPercDiff, critRateDiff, critDmgDiff } = profile.substats;
+      const { atkPercDiff, critRateDiff, critDmgDiff } = getSubstatGrowth(
+        profile,
+      );
 
       const max = Math.max(atkPercDiff, critRateDiff, critDmgDiff);
       let textKey = '';
@@ -125,30 +157,96 @@ const Profile = ({ data, onProfileChange }) => {
           break;
       }
       const stat = translate(intl, textKey, { gain: decimalToPercent(max) });
-      const substat = translate(intl, 'profile.substat.best', { stat: stat });
+      const info = translate(intl, 'profile.substat.best', { stat: stat });
 
-      return substat;
+      return info;
     }
 
     return null;
   };
 
-  const profileChangeRef = useRef();
-  profileChangeRef.current = onProfileChange;
-  useEffect(() => {
-    if (profile) profileChangeRef.current(profile);
-  }, [profile]);
+  const getSpiralBuffInfo = () => {
+    if (profileData) {
+      const { critPercDiff, atk20Diff, atk30Diff, atk40Diff } = getSpiralBuffs(
+        profileData,
+      );
+
+      let chamberBuffKey = '';
+      const maxChamber = Math.max(
+        critPercDiff,
+        atk20Diff,
+        atk30Diff,
+        atk40Diff,
+      );
+      switch (maxChamber) {
+        case critPercDiff:
+          chamberBuffKey = 'profile.spiral.critBuffGain';
+          break;
+        case atk20Diff:
+          chamberBuffKey = 'profile.spiral.atk20Gain';
+          break;
+        case atk30Diff:
+          chamberBuffKey = 'profile.spiral.atk30Gain';
+          break;
+        case atk40Diff:
+          chamberBuffKey = 'profile.spiral.atk40Gain';
+          break;
+        default:
+          break;
+      }
+
+      let floorBuffKey = '';
+      const maxFloor = Math.max(critPercDiff, atk20Diff);
+      switch (maxFloor) {
+        case critPercDiff:
+          floorBuffKey = 'profile.spiral.critBuffGain';
+          break;
+        case atk20Diff:
+          floorBuffKey = 'profile.spiral.atk20Gain';
+          break;
+        default:
+          break;
+      }
+
+      const chamberBuff = translate(intl, chamberBuffKey, {
+        gain: decimalToPercent(maxChamber),
+      });
+      const chamberBuffText = translate(intl, 'profile.spiral.chamberBuff', {
+        buff: chamberBuff,
+      });
+
+      const floorBuff = translate(intl, floorBuffKey, {
+        gain: decimalToPercent(maxFloor),
+      });
+      const floorBuffText = translate(intl, 'profile.spiral.floorBuff', {
+        buff: floorBuff,
+      });
+
+      return (
+        <React.Fragment>
+          <div>{chamberBuffText}</div>
+          <div> {floorBuffText}</div>
+        </React.Fragment>
+      );
+    }
+
+    return null;
+  };
 
   return (
     <React.Fragment>
-      {components}
-      <br />
-      {profile &&
-        translate(intl, 'profile.summary.elePower', {
-          power: profile.elePower,
-        })}
-      <br />
-      {getSubstatGrowth(profile)}
+      <div>
+        {components}
+        <br />
+        {profileData &&
+          translate(intl, 'profile.summary.elePower', {
+            power: getElePower(profileData),
+          })}
+        <br />
+        {getSubstatInfo(profileData)}
+        <br />
+        {getSpiralBuffInfo()}
+      </div>
     </React.Fragment>
   );
 };

@@ -1,3 +1,3 @@
-export const calculatePower = (profile) => {
-    return "Hello World"
-}
+export const calculatePower = profile => {
+  return 'Hello World';
+};
