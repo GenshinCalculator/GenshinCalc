@@ -1,7 +1,7 @@
 export const addProfile = (id, profile) => {};
 
 export const storageGet = id => {
-  window.locationStorage.getItem(id);
+  window.localStorage.getItem(id);
 };
 
 export const storageAdd = (id, item) => {

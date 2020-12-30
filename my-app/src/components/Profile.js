@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import translate from '../helpers/translate';
 import charProfile from '../models/characterProfile';
@@ -8,8 +8,6 @@ import { storageAdd } from '../helpers/storageHelper';
 const useInput = (id, initState = '', stringId) => {
   const intl = useIntl();
   const [state, setState] = useState(initState);
-
-  console.log(id, state, initState);
 
   const onChange = e => {
     setState(e.currentTarget.value);
@@ -37,7 +35,6 @@ const useInput = (id, initState = '', stringId) => {
 const useProfile = (initProfile = {}) => {
   const [profile, setProfile] = useState(null);
 
-  console.log('init profile:', initProfile);
   const [baseAtkComponent, baseAtkState] = useInput(
     'baseAtk',
     initProfile.baseAtk,
@@ -98,9 +95,15 @@ const useProfile = (initProfile = {}) => {
   return [profile, components];
 };
 
-const Profile = ({ data }) => {
+const Profile = ({ data, onProfileChange }) => {
   const intl = useIntl();
-  const [profile, components] = useProfile(data);
+
+  const [profileData, setProfileData] = useState(data);
+
+  const onProfileUpdate = profileInputs => {
+    setProfileData(charProfile(profileInputs), profileData.id);
+  };
+  const [profile, components] = useProfile(data, onProfileUpdate);
 
   const getSubstatGrowth = profile => {
     if (profile) {
@@ -130,8 +133,10 @@ const Profile = ({ data }) => {
     return null;
   };
 
+  const profileChangeRef = useRef();
+  profileChangeRef.current = onProfileChange;
   useEffect(() => {
-    if (profile) storageAdd('profileIdTodo', JSON.stringify([profile]));
+    if (profile) profileChangeRef.current(profile);
   }, [profile]);
 
   return (

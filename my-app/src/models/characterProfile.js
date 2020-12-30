@@ -1,11 +1,21 @@
+import { v4 as uuidv4 } from 'uuid';
+
 const charProfile = data => {
   if (!data) return null;
   const { baseAtk, flatAtk, percAtk, critC, critD, percEle } = data;
+  let { id } = data;
+
+  console.log('id:', id);
+
+  if (!id) {
+    id = uuidv4();
+  }
 
   if (!baseAtk || !flatAtk || !percAtk || !critC || !critD || !percEle)
     return null;
 
   const profile = {
+    id,
     baseAtk,
     flatAtk,
     percAtk: percAtk,
