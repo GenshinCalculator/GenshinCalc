@@ -1,22 +1,22 @@
 {
   "files": {
     "main.css": "/GenshinCalc/static/css/main.73efbf52.chunk.css",
-    "main.js": "/GenshinCalc/static/js/main.e2aa92d8.chunk.js",
-    "main.js.map": "/GenshinCalc/static/js/main.e2aa92d8.chunk.js.map",
-    "runtime-main.js": "/GenshinCalc/static/js/runtime-main.5964f5c4.js",
-    "runtime-main.js.map": "/GenshinCalc/static/js/runtime-main.5964f5c4.js.map",
-    "static/js/2.e8fba8f3.chunk.js": "/GenshinCalc/static/js/2.e8fba8f3.chunk.js",
-    "static/js/2.e8fba8f3.chunk.js.map": "/GenshinCalc/static/js/2.e8fba8f3.chunk.js.map",
-    "static/js/3.e6eef4c5.chunk.js": "/GenshinCalc/static/js/3.e6eef4c5.chunk.js",
-    "static/js/3.e6eef4c5.chunk.js.map": "/GenshinCalc/static/js/3.e6eef4c5.chunk.js.map",
+    "main.js": "/GenshinCalc/static/js/main.3e521cee.chunk.js",
+    "main.js.map": "/GenshinCalc/static/js/main.3e521cee.chunk.js.map",
+    "runtime-main.js": "/GenshinCalc/static/js/runtime-main.bb8ba55a.js",
+    "runtime-main.js.map": "/GenshinCalc/static/js/runtime-main.bb8ba55a.js.map",
+    "static/js/2.1613641e.chunk.js": "/GenshinCalc/static/js/2.1613641e.chunk.js",
+    "static/js/2.1613641e.chunk.js.map": "/GenshinCalc/static/js/2.1613641e.chunk.js.map",
+    "static/js/3.8c743914.chunk.js": "/GenshinCalc/static/js/3.8c743914.chunk.js",
+    "static/js/3.8c743914.chunk.js.map": "/GenshinCalc/static/js/3.8c743914.chunk.js.map",
     "index.html": "/GenshinCalc/index.html",
     "static/css/main.73efbf52.chunk.css.map": "/GenshinCalc/static/css/main.73efbf52.chunk.css.map",
-    "static/js/2.e8fba8f3.chunk.js.LICENSE.txt": "/GenshinCalc/static/js/2.e8fba8f3.chunk.js.LICENSE.txt"
+    "static/js/2.1613641e.chunk.js.LICENSE.txt": "/GenshinCalc/static/js/2.1613641e.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
-    "static/js/runtime-main.5964f5c4.js",
-    "static/js/2.e8fba8f3.chunk.js",
+    "static/js/runtime-main.bb8ba55a.js",
+    "static/js/2.1613641e.chunk.js",
     "static/css/main.73efbf52.chunk.css",
-    "static/js/main.e2aa92d8.chunk.js"
+    "static/js/main.3e521cee.chunk.js"
   ]
 }
