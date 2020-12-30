@@ -1,9 +1,13 @@
 export const addProfile = (id, profile) => {};
 
-export const addItem = (id, item) => {
-  window.localStorage.addItem(id, item);
+export const storageGet = id => {
+  window.locationStorage.getItem(id);
 };
 
-export const deleteItem = (id, item) => {
-  window.localStorage.addItem(id, item);
+export const storageAdd = (id, item) => {
+  window.localStorage.setItem(id, item);
+};
+
+export const storageDelete = id => {
+  window.localStorage.removeItem(id);
 };

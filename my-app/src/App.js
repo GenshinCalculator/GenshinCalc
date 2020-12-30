@@ -7,9 +7,8 @@ function App() {
   const [localProfiles, setProfiles] = useState([]);
 
   useEffect(() => {
-    const profilesJson = window.localStorage.getItem('profileId');
+    const profilesJson = window.localStorage.getItem('profileIdTodo');
     if (profilesJson) {
-      console.log('reading profile:', profilesJson);
       setProfiles(JSON.parse(profilesJson));
     } else {
       setProfiles([]);
@@ -23,6 +22,8 @@ function App() {
       {localProfiles && localProfiles[0] && (
         <Profile data={localProfiles[0]}></Profile>
       )}
+      <p></p>
+      <Profile></Profile>
       {/* {localProfiles && localProfiles[1] && (
         <Profile data={localProfiles[1]}></Profile>
       )}

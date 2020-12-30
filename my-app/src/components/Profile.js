@@ -3,6 +3,7 @@ import { useIntl } from 'react-intl';
 import translate from '../helpers/translate';
 import charProfile from '../models/characterProfile';
 import { decimalToPercent } from '../helpers/stringHelper';
+import { storageAdd } from '../helpers/storageHelper';
 
 const useInput = (id, initState = '', stringId) => {
   const intl = useIntl();
@@ -128,6 +129,10 @@ const Profile = ({ data }) => {
 
     return null;
   };
+
+  useEffect(() => {
+    if (profile) storageAdd('profileIdTodo', JSON.stringify([profile]));
+  }, [profile]);
 
   return (
     <React.Fragment>
