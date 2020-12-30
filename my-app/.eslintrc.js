@@ -1,4 +1,4 @@
-moduleo = {
+module.exports = {
   extends: [
     'plugin:prettier/recommended',
     'prettier/react',
@@ -14,14 +14,20 @@ moduleo = {
     browser: true,
   },
   plugins: [
+    'babel',
     'import',
     'prettier',
     'react',
     'react-redux',
     'react-hooks',
-    'babel',
   ],
   rules: {
+    'prettier/prettier': [
+      'error',
+      {
+        endOfLine: 'auto',
+      },
+    ],
     'import/prefer-default-export': ['off'],
     'no-unused-expressions': [
       'error',

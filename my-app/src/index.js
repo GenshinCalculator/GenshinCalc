@@ -9,7 +9,7 @@ import reportWebVitals from './reportWebVitals';
 
 ReactDOM.render(
   <React.StrictMode>
-    <IntlProvider defaultLocale="en-US" messages={messages}>
+    <IntlProvider locale="en-US" defaultLocale="en-US" messages={messages}>
       <App />
     </IntlProvider>
   </React.StrictMode>,

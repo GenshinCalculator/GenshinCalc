@@ -36,6 +36,7 @@ const useInput = (id, initState = '', stringId) => {
 const useProfile = (initProfile = {}) => {
   const [profile, setProfile] = useState(null);
 
+  console.log('init profile:', initProfile);
   const [baseAtkComponent, baseAtkState] = useInput(
     'baseAtk',
     initProfile.baseAtk,
@@ -52,7 +53,10 @@ const useProfile = (initProfile = {}) => {
     'critC',
     initProfile.critC ? initProfile.critC * 100 : '',
   );
-  const [critDmgComponent, critDmgState] = useInput('critD', initProfile.critD);
+  const [critDmgComponent, critDmgState] = useInput(
+    'critD',
+    initProfile.critD ? initProfile.critD * 100 : '',
+  );
   const [eleDmgComponent, eleDmgState] = useInput(
     'eleDmg',
     initProfile.percEle ? initProfile.percEle * 100 : '',
@@ -93,57 +97,50 @@ const useProfile = (initProfile = {}) => {
   return [profile, components];
 };
 
-const getSpiralBuffs = profile => {};
-const getBestFloorBuff = profile => {};
-const getBestChamberBuff = profile => {};
+const Profile = ({ data }) => {
+  const intl = useIntl();
+  const [profile, components] = useProfile(data);
 
-const getSubstatGrowth = profile => {
-  // const intl = useIntl();
-  // if (profile) {
-  //   const { atkPercDiff, critRateDiff, critDmgDiff } = profile.substats;
+  const getSubstatGrowth = profile => {
+    if (profile) {
+      const { atkPercDiff, critRateDiff, critDmgDiff } = profile.substats;
 
-  //   const max = Math.max(atkPercDiff, critRateDiff, critDmgDiff);
-  //   let textKey = '';
-  //   switch (max) {
-  //     case atkPercDiff:
-  //       textKey = 'profile.substat.atkPercGain';
-  //       break;
-  //     case critRateDiff:
-  //       textKey = 'profile.substat.critRateGain';
-  //       break;
-  //     case critDmgDiff:
-  //       textKey = 'profile.substat.critDmgGain';
-  //       break;
-  //     default:
-  //       break;
-  //   }
-  //   const stat = translate(intl, textKey, { gain: decimalToPercent(max) });
-  //   const substat = translate(intl, 'profile.substat.best', { stat: stat });
+      const max = Math.max(atkPercDiff, critRateDiff, critDmgDiff);
+      let textKey = '';
+      switch (max) {
+        case atkPercDiff:
+          textKey = 'profile.substat.atkPercGain';
+          break;
+        case critRateDiff:
+          textKey = 'profile.substat.critRateGain';
+          break;
+        case critDmgDiff:
+          textKey = 'profile.substat.critDmgGain';
+          break;
+        default:
+          break;
+      }
+      const stat = translate(intl, textKey, { gain: decimalToPercent(max) });
+      const substat = translate(intl, 'profile.substat.best', { stat: stat });
 
-  //   return substat;
-  // }
+      return substat;
+    }
 
-  return null;
+    return null;
+  };
+
+  return (
+    <React.Fragment>
+      {components}
+      <br />
+      {profile &&
+        translate(intl, 'profile.summary.elePower', {
+          power: profile.elePower,
+        })}
+      <br />
+      {getSubstatGrowth(profile)}
+    </React.Fragment>
+  );
 };
 
-const createProfile = initProfile => {
-  // const intl = useIntl();
-  // const [profile, components] = useProfile(initProfile);
-  // if (profile) {
-  //   console.log('saving profile!');
-  //   window.localStorage.setItem('profileId', JSON.stringify([profile]));
-  // }
-  // return (
-  //   <React.Fragment>
-  //     {components}
-  //     {profile &&
-  //       translate(intl, 'profile.summary.elePower', {
-  //         power: profile.elePower,
-  //       })}
-  //     <br />
-  //     {getSubstatGrowth(profile)}
-  //   </React.Fragment>
-  // );
-};
-
-export default createProfile;
+export default Profile;

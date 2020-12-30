@@ -3,10 +3,11 @@ export default {
   'profile.level': 'Level',
   'profile.baseAtk': 'Base Attack',
   'profile.percAtk': 'Atk %',
-  'profile.flatAttack': 'Flat Attack',
+  'profile.flatAtk': 'Flat Attack',
   'profile.critC': 'Crit Rate',
-  'profile.critR': 'Crit Damage',
+  'profile.critD': 'Crit Damage',
   'profile.eleDmg': 'Ele %',
+  'profile.summary.elePower': 'Elemental Power: {power}',
 
   'profile.substat.best': 'Next stat to target -- {stat}',
   'profile.substat.atkPercGain': 'Attack Percent Improvement: {gain}',
